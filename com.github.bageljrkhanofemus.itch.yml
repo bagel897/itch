@@ -1,0 +1,53 @@
+# Heavily based on the PKGBUILD from arch and the Lutris flatpak
+app-id: com.github.bageljrkhanofemus.itch
+runtime: org.gnome.Platform
+runtime-version: '42'
+sdk: org.gnome.Sdk
+command: itch 
+base: org.winehq.Wine
+base-version: stable-21.08
+modules:
+  - name: itch
+    buildsystem: simple
+    only_arches: ["x86_64"]
+    build-commands:
+      - install -D itch-setup /app/bin/itch-setup
+      - install -D itch.sh /app/bin/itch
+      - install -D com.github.bageljrkhanofemus.itch.appdata.xml /app/share/metadatainfo/com.github.bageljrkhanofemus.itch.appdata.xml
+      - install -D itch.desktop /app/share/applications/com.github.bageljrkhanofemus.itch.desktop
+      - sh install-icons.sh
+    sources:
+      - type: archive
+        url: https://github.com/itchio/itch/archive/v25.5.1.tar.gz
+        sha256: 0a7094bff90992e3788fd9f9df43a4a3c9233bfcf0f5da037e59af6b365a3249
+      - type: file 
+        url: https://broth.itch.ovh/itch-setup/linux-amd64/1.26.0/unpacked/default
+        sha256: c7a13db7234ca908bcfb60ed5369b5c02b0a795e5e5490f68eeacb5a637a2162
+        dest-filename: itch-setup
+      - type: file
+        path: itch.sh
+      - type: file        
+        path: com.github.bageljrkhanofemus.itch.appdata.xml
+      - type: file        
+        path: itch.desktop
+      - type: file
+        path: install-icons.sh
+finish-args:
+  - --socket=x11
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --share=network
+  - --device=all    
+  # - --allow=multiarch If 32 Bit support is needed
+  - --share=ipc  
+  - --persist=.wine
+  - --persist=.itch
+  - --talk-name=org.freedesktop.Notifications  
+  - --talk-name=org.freedesktop.ScreenSaver
+inherit-extensions:
+  # - org.freedesktop.Platform.GL32
+  - org.freedesktop.Platform.ffmpeg-full
+  # - org.freedesktop.Platform.ffmpeg_full.i386 If 32 Bit support is needed
+  - org.winehq.Wine.gecko
+  - org.winehq.Wine.mono
+  - org.winehq.Wine.DLLs
